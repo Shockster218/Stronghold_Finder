@@ -147,13 +147,12 @@ def addStrongholdCoords(x, y):
 def addUserInput(inp):
     global uInput
     global exit
-    if inp == 10:
-        if uInput == "exit":
-            stdscr.keypad(False)
-            curses.echo()
-            curses.endwin()
-            stdscr.clear()
-            exit = True
+    if inp == 10 and uInput == "exit":
+        stdscr.keypad(False)
+        curses.echo()
+        curses.endwin()
+        stdscr.clear()
+        exit = True
     elif inp == 8:
         uInput = uInput[:-1]
         stdscr.delch(7, len(uInput))
@@ -176,5 +175,5 @@ while not exit:
             clipboard = pyperclip.waitForNewPaste(1)
             parseClipboard(clipboard)
         except:
-            pass:
+            pass
     stdscr.refresh()
