@@ -57,9 +57,10 @@ def hitCircle(pX, pZ, angle):
     return (pos1, pos2)
 
 
-def StrongholdCoords():
+def SecondThrowCoords(clip):
     # stabilishing the variables
-    f3c0 = input()
+    global firstThrowSet
+    f3c0 = clip
     f3c0 = f3c0[42:]
     f3c0 = f3c0.split()
     px0 = float(f3c0[0])
@@ -76,15 +77,20 @@ def StrongholdCoords():
     distOrigin = np.sqrt(px0*px0 + pz0*pz0)
     # print("You're this far from the Origin: ", distOrigin)
 
+    response = ""
+
     if distOrigin >= 1400:
-        print("Move 27 blocks perpendicularly to the Ender Eye flight direction and throw the second one. (27 blocks = 4 seconds sprinting)")
+        response = "Move 27 blocks perpendicularly to the Ender Eye flight direction and throw the second eye. Copy those coords for stronghold reading."
 
     else:
         circlePoint, secThrowPoint = hitCircle(px0, pz0, angle0)
-        print("Go to: ", secThrowPoint, "\nCircle starts at: ", circlePoint)
+        response = f'Suggested 2nd throw coords: ({secThrowPoint[0]} , {secThrowPoint[1]})'
 
-    # stabilishing the variables
-    f3c1 = input()
+    firstThrowSet = True
+
+
+def StrongholdCoords(clip):
+    f3c1 = clip
     f3c1 = f3c1[42:]
     f3c1 = f3c1.split()
     px1 = float(f3c1[0])
@@ -105,8 +111,8 @@ def StrongholdCoords():
     pxS = (b1 - b0)/(a0 - a1)
     pzS = pxS * a0 + b0
 
-    # printing
-    print("Stronghold is at: ", (pxS, pzS), " GOOD LUCK :D")
+    response = f'Stronghold location: ({pxS} , {pxZ})'
+    addStrongholdCoords(response)
 
 
 stdscr = curses.initscr()
@@ -115,33 +121,71 @@ curses.cbreak()
 stdscr.nodelay(1)
 stdscr.keypad(True)
 exit = False
-newrun = False
+newRun = True
+firstThrowSet = False
+netherSet = False
 uInput = ""
 
 
 def initWindow():
+    global newRun
+    global firstThrowSet
+    global netherSet
+    global uInput
+    newRun = True
+    firstThrowSet = False
+    netherSet = False
+    uInput = ""
+    stdscr.clear()
     stdscr.addstr(0, 10, "Stronghold finder by Brandon Giannos aka Shockster_")
-    stdscr.addstr(2, 0, "This runs nether coords: ")
-    stdscr.addstr(4, 0, "Suggested 2nd throw coords: ")
-    stdscr.addstr(5, 0, "Stronghold location: ")
-    stdscr.move(7, 0)
+    stdscr.addstr(1, 10, "Coordinates for stronghold are read (x,z) and for nether (x,y,z)")
+    stdscr.addstr(3, 0, "This runs nether coords: ")
+    stdscr.addstr(5, 0, "Suggested 2nd throw coords: ")
+    stdscr.addstr(6, 0, "Stronghold location: ")
+    stdscr.move(8, 0)
 
 
 def parseClipboard(clip):
-    pass
+    global newRun
+    global firstThrowSet
+    global netherSet
+    if clip[1:21] == "execute in minecraft":
+        if clip[22:32] == "the_nether" and netherSet == False and newRun == True:
+            addNetherCoords(clip)
+            newRun = False
+            netherSet = True
+        else:
+            if netherSet == True:
+                if firstThrowSet == True:
+                    StrongholdCoords(clip)
+                    netherSet = False
+                    newRun = True
+                else:
+                    SecondThrowCoords(clip)
+                    firstThrowSet = True
 
 
-def addNetherCoords(x, y):
-    pass
+def addNetherCoords(clip):
+    initWindow()
+    f3 = clip
+    f3 = f3[42:]
+    f3 = f3.split()
+    pX = int(round(float(f3[0])))
+    pY = int(round(float(f3[1])))
+    pZ = int(round(float(f3[2])))
+    response = f'This runs nether coords: ({pX} , {pY}, {pZ}) '
+    stdscr.addstr(3, 0, response)
+    stdscr.move(8, 0)
 
 
-def addSecondThrow(x, y):
-    pass
+def addSecondThrow(response):
+    stdscr.addstr(5, 0, response)
+    stdscr.move(8, 0)
 
 
-def addStrongholdCoords(x, y):
-    pass
-
+def addStrongholdCoords(response):
+    stdscr.addstr(6, 0, response)
+    stdscr.move(8, 0)
 
 
 def addUserInput(inp):
@@ -155,25 +199,30 @@ def addUserInput(inp):
         exit = True
     elif inp == 8:
         uInput = uInput[:-1]
-        stdscr.delch(7, len(uInput))
+        stdscr.delch(8, len(uInput))
     elif chr(inp).isalpha():
         uInput = uInput + chr(inp)
-        stdscr.addstr(7, 0, uInput)
+        stdscr.addstr(8, 0, uInput)
+
 
 initWindow()
 
+
 while not exit:
+    pyperclip.copy("")
     char = stdscr.getch()
     if char != -1:
-        #reset key tilde
+        # reset key tilde
         if char == 96:
             initWindow()
         else:
             addUserInput(char)
     else:
         try:
-            clipboard = pyperclip.waitForNewPaste(1)
-            parseClipboard(clipboard)
+            pyperclip.waitForNewPaste(0.1)
         except:
             pass
+        else:
+            clipboard = pyperclip.paste()
+            parseClipboard(clipboard)
     stdscr.refresh()
