@@ -6,6 +6,13 @@ import curses
 # hitCircle calculates where the first stronghold generation ring starts, where the player would "hit" it, moving directly forward
 # and calculates the position to the second ender eye throw
 
+pz0 = 0
+px0 = 0
+angle0 = 0
+pz1 = 0
+px1 = 0
+angle1 = 0
+
 
 def hitCircle(pX, pZ, angle):
     xHit = None
@@ -59,7 +66,9 @@ def hitCircle(pX, pZ, angle):
 
 def SecondThrowCoords(clip):
     # stabilishing the variables
-    global firstThrowSet
+    global pz0
+    global px0
+    global angle0
     f3c0 = clip
     f3c0 = f3c0[42:]
     f3c0 = f3c0.split()
@@ -79,17 +88,16 @@ def SecondThrowCoords(clip):
 
     response = ""
 
-    if distOrigin >= 1400:
-        response = "Move 27 blocks perpendicularly to the Ender Eye flight direction and throw the second eye. Copy those coords for stronghold reading."
+    circlePoint, secThrowPoint = hitCircle(px0, pz0, angle0)
+    response = f'Suggested 2nd throw coords: ({round(secThrowPoint[0], 1)} , {round(secThrowPoint[1], 1)})'
 
-    else:
-        circlePoint, secThrowPoint = hitCircle(px0, pz0, angle0)
-        response = f'Suggested 2nd throw coords: ({secThrowPoint[0]} , {secThrowPoint[1]})'
-
-    firstThrowSet = True
+    addSecondThrow(response)
 
 
 def StrongholdCoords(clip):
+    global pz1
+    global px1
+    global angle1
     f3c1 = clip
     f3c1 = f3c1[42:]
     f3c1 = f3c1.split()
@@ -111,7 +119,7 @@ def StrongholdCoords(clip):
     pxS = (b1 - b0)/(a0 - a1)
     pzS = pxS * a0 + b0
 
-    response = f'Stronghold location: ({pxS} , {pxZ})'
+    response = f'Stronghold location: ({round(pxS, 1)} , {round(pzS, 1)})'
     addStrongholdCoords(response)
 
 
@@ -121,8 +129,8 @@ curses.cbreak()
 stdscr.nodelay(1)
 stdscr.keypad(True)
 exit = False
-newRun = True
 firstThrowSet = False
+secondThrowSet = False
 netherSet = False
 uInput = ""
 
@@ -132,8 +140,8 @@ def initWindow():
     global firstThrowSet
     global netherSet
     global uInput
-    newRun = True
     firstThrowSet = False
+    secondThrowSet = True
     netherSet = False
     uInput = ""
     stdscr.clear()
@@ -147,20 +155,20 @@ def initWindow():
 
 
 def parseClipboard(clip):
-    global newRun
-    global firstThrowSet
     global netherSet
+    global firstThrowSet
+    global secondThrowSet
+    if secondThrowSet == True:
+        initWindow()
     if clip[1:21] == "execute in minecraft":
         if clip[22:32] == "the_nether":
-            if netherSet == False and newRun == True:
+            if netherSet == False:
                 addNetherCoords(clip)
-                newRun = False
                 netherSet = True
         else:
             if firstThrowSet == True:
                 StrongholdCoords(clip)
-                netherSet = False
-                newRun = True
+                secondThrowSet = True
             else:
                 SecondThrowCoords(clip)
                 firstThrowSet = True
