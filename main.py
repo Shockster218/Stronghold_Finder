@@ -1,6 +1,6 @@
 import numpy as np
 import pyperclip
-import msvcrt
+import keyboard
 import curses
 
 # hitCircle calculates where the first stronghold generation ring starts, where the player would "hit" it, moving directly forward
@@ -143,6 +143,7 @@ def initWindow():
     stdscr.addstr(5, 0, "Suggested 2nd throw coords: ")
     stdscr.addstr(6, 0, "Stronghold location: ")
     stdscr.move(8, 0)
+    stdscr.refresh()
 
 
 def parseClipboard(clip):
@@ -212,14 +213,12 @@ while not exit:
     pyperclip.copy("")
     char = stdscr.getch()
     if char != -1:
-        # reset key tilde
-        if char == 96:
-            initWindow()
-        else:
-            addUserInput(char)
+        addUserInput(char)
     else:
+        if keyboard.is_pressed('~'):
+            initWindow()
         try:
-            pyperclip.waitForNewPaste(0.1)
+            pyperclip.waitForPaste(0.1)
         except:
             pass
         else:
