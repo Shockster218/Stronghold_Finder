@@ -150,19 +150,19 @@ def parseClipboard(clip):
     global firstThrowSet
     global netherSet
     if clip[1:21] == "execute in minecraft":
-        if clip[22:32] == "the_nether" and netherSet == False and newRun == True:
-            addNetherCoords(clip)
-            newRun = False
-            netherSet = True
+        if clip[22:32] == "the_nether":
+            if netherSet == False and newRun == True:
+                addNetherCoords(clip)
+                newRun = False
+                netherSet = True
         else:
-            if netherSet == True:
-                if firstThrowSet == True:
-                    StrongholdCoords(clip)
-                    netherSet = False
-                    newRun = True
-                else:
-                    SecondThrowCoords(clip)
-                    firstThrowSet = True
+            if firstThrowSet == True:
+                StrongholdCoords(clip)
+                netherSet = False
+                newRun = True
+            else:
+                SecondThrowCoords(clip)
+                firstThrowSet = True
 
 
 def addNetherCoords(clip):
