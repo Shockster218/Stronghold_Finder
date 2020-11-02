@@ -81,7 +81,7 @@ def SecondThrowCoords(clip):
         angle0 = (angle0-270) % 360
 
     circlePoint, secThrowPoint = hitCircle(px0, pz0, angle0)
-    response = f'Suggested 2nd throw coords: ({round(secThrowPoint[0], 0)} , {round(secThrowPoint[1], 0)})'
+    response = f'Suggested 2nd throw coords: ({int(secThrowPoint[0])} , {int(secThrowPoint[1])})'
     addSecondThrow(response)
 
 
@@ -109,7 +109,7 @@ def StrongholdCoords(clip):
     pxS = (b1 - b0)/(a0 - a1)
     pzS = pxS * a0 + b0
 
-    response = f'Stronghold location: ({round(pxS, 0)} , {round(pzS, 0)})'
+    response = f'Stronghold location: ({int(pxS)} , {round(pzS)})'
     addStrongholdCoords(response)
 
 
@@ -126,7 +126,7 @@ uInput = ""
 
 
 def initWindow():
-    global newRun
+    global secondThrowSet
     global firstThrowSet
     global netherSet
     global uInput
@@ -153,7 +153,7 @@ def parseClipboard(clip):
     if clip[1:21] == "execute in minecraft":
         if clip[22:32] == "the_nether":
             if netherSet == False:
-                if firstThrow = True:
+                if firstThrow == True:
                     initWindow()
                 addNetherCoords(clip)
                 netherSet = True
