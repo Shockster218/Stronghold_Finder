@@ -49,3 +49,25 @@ Slight modification of @AlanTheBenign's stronghold finder to read directly from 
 </p>
 
 # Usage
+Using the program is extremely simple. Simply have it running in the background (preferably on a second monitor) or anywhere in sight. When in-game, simply
+hit the key combination F3 + C (in that order) to copy your cords to your clipboard. The program will then automatically detect what coords you are trying to save
+(nether, first eye throw, second eye throw) and add them to the corresponding lines! Also, don't worry if you accidentally copied the wrong coords for whatever reason, there is a built in reset function in the program. Simply type "reset" into the command line or hit the tilde key "~" on your keyboard. Another handy feature of the program is to also detect when you are on a new run. This is on place so you don't have to reset the program everytime you start a new run. To close the program, simply type "exit" in the command line or close out of the console.
+
+### Handy shortcuts
+- F3 + C (in that order): Copy coordinates to clipboard for the program.
+- Tilde Key "~" (next to 1 on keyboard): Reset the coordinates in the program.
+- Typing "reset" in console: Reset the coordinates in the program.
+- Type "exit" in console: Exits the program.
+
+# FAQ 
+
+### Why have an external program? Why not hook this directly into the client?
+The reason this process is necessary is due to the guidelines and rules for speedrunning minecraft (found [here](https://docs.google.com/document/d/1A7NtP7LegD7SYjho54gQDSlJkYZlofndjw2COu00yMU/edit) ). You are not allowed to modify or tamper with the code of the client in any shape or form.
+
+### Is this allowed for speedrunning?
+Directly quotes from the speedrunning discord
+> Q: Is a stronghold finder allowed?
+>A: Yes, but no. Any stronghold/structure finder website that asks for seed input is not allowed. You are not allowed to use or see the seed of the world you’re in. However, stronghold calculators that take 2 angles as an input and locates the stronghold using math are allowed.
+Since this program does not need nor ask for your seed, it is completely legal and follows speedrun guidelines.
+
+### More to come in due time.

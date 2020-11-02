@@ -65,7 +65,6 @@ def hitCircle(pX, pZ, angle):
 
 
 def SecondThrowCoords(clip):
-    # stabilishing the variables
     global pz0
     global px0
     global angle0
@@ -76,21 +75,13 @@ def SecondThrowCoords(clip):
     pz0 = float(f3c0[2])
     angle0 = float(f3c0[3]) % 360
 
-    # translating minecraft angles to daily life cartesian angles
     if angle0 >= 0:
         angle0 = (angle0+90) % 360
     else:
         angle0 = (angle0-270) % 360
 
-    # distance from origin
-    distOrigin = np.sqrt(px0*px0 + pz0*pz0)
-    # print("You're this far from the Origin: ", distOrigin)
-
-    response = ""
-
     circlePoint, secThrowPoint = hitCircle(px0, pz0, angle0)
-    response = f'Suggested 2nd throw coords: ({round(secThrowPoint[0], 1)} , {round(secThrowPoint[1], 1)})'
-
+    response = f'Suggested 2nd throw coords: ({round(secThrowPoint[0], 0)} , {round(secThrowPoint[1], 0)})'
     addSecondThrow(response)
 
 
@@ -105,7 +96,6 @@ def StrongholdCoords(clip):
     pz1 = float(f3c1[2])
     angle1 = float(f3c1[3]) % 360
 
-    # translating minecraft angles to daily life cartesian angles
     if angle1 >= 0:
         angle1 = (angle1+90) % 360
     else:
@@ -119,7 +109,7 @@ def StrongholdCoords(clip):
     pxS = (b1 - b0)/(a0 - a1)
     pzS = pxS * a0 + b0
 
-    response = f'Stronghold location: ({round(pxS, 1)} , {round(pzS, 1)})'
+    response = f'Stronghold location: ({round(pxS, 0)} , {round(pzS, 0)})'
     addStrongholdCoords(response)
 
 
@@ -141,12 +131,12 @@ def initWindow():
     global netherSet
     global uInput
     firstThrowSet = False
-    secondThrowSet = True
+    secondThrowSet = False
     netherSet = False
     uInput = ""
     stdscr.clear()
-    stdscr.addstr(0, 10, "Stronghold finder by Brandon Giannos aka Shockster_")
-    stdscr.addstr(1, 10, "Coordinates for stronghold are read (x,z) and for nether (x,y,z)")
+    stdscr.addstr(0, 32, "Stronghold finder by Brandon Giannos aka Shockster_")
+    stdscr.addstr(1, 5, "Coordinates for stronghold are read (x,z) and for nether (x,y,z). Please look at README.md for usage and FAQ.")
     stdscr.addstr(3, 0, "This runs nether coords: ")
     stdscr.addstr(5, 0, "Suggested 2nd throw coords: ")
     stdscr.addstr(6, 0, "Stronghold location: ")
@@ -163,6 +153,8 @@ def parseClipboard(clip):
     if clip[1:21] == "execute in minecraft":
         if clip[22:32] == "the_nether":
             if netherSet == False:
+                if firstThrow = True:
+                    initWindow()
                 addNetherCoords(clip)
                 netherSet = True
         else:
@@ -200,12 +192,15 @@ def addStrongholdCoords(response):
 def addUserInput(inp):
     global uInput
     global exit
-    if inp == 10 and uInput == "exit":
-        stdscr.keypad(False)
-        curses.echo()
-        curses.endwin()
-        stdscr.clear()
-        exit = True
+    if inp == 10:
+        if uInput.lower() == "exit":
+            stdscr.keypad(False)
+            curses.echo()
+            curses.endwin()
+            stdscr.clear()
+            exit = True
+        elif uInput.lower() == "reset":
+            initWindow()
     elif inp == 8:
         uInput = uInput[:-1]
         stdscr.delch(8, len(uInput))
