@@ -1,9 +1,15 @@
+# Table of Contents
+1. [About](#About)
+2. [Installation](#Installation)
+3. [Usage](#Usage)
+4. [FAQ](#FAQ)
+
 # About
 Slight modification of @AlanTheBenign's stronghold finder to read directly from the clipboard. Also reads nether coords. All cases are meant for speedrunning. Any questions or concerns about the algorithm of the stronghold finder should be directed toward https://github.com/AlantheBenign/Minecraft-Stronghold-Finder.
 
 # Installation
 1. Install the latest version of python at https://www.python.org/downloads/
-> If you installed the latest version of python, skip this step. To number 3.
+> If you have the latest version of python, skip this step. It is recommended to have the latest version.
 
 <p align="center">
   <img src="https://gyazo.com/47f08b324b40cdd114cde214f3a7682b.png"/>
@@ -65,9 +71,12 @@ hit the key combination F3 + C (in that order) to copy your cords to your clipbo
 The reason this process is necessary is due to the guidelines and rules for speedrunning minecraft (found [here](https://docs.google.com/document/d/1A7NtP7LegD7SYjho54gQDSlJkYZlofndjw2COu00yMU/edit) ). You are not allowed to modify or tamper with the code of the client in any shape or form.
 
 ### Is this allowed for speedrunning?
-Directly quotes from the speedrunning discord
+Directly quoted from the speedrunning discord
+
 > Q: Is a stronghold finder allowed?
+
 >A: Yes, but no. Any stronghold/structure finder website that asks for seed input is not allowed. You are not allowed to use or see the seed of the world you’re in. However, stronghold calculators that take 2 angles as an input and locates the stronghold using math are allowed.
+
 Since this program does not need nor ask for your seed, it is completely legal and follows speedrun guidelines.
 
 ### More to come in due time.
