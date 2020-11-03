@@ -153,7 +153,7 @@ def parseClipboard(clip):
     if clip[1:21] == "execute in minecraft":
         if clip[22:32] == "the_nether":
             if netherSet == False:
-                if firstThrow == True:
+                if firstThrowSet == True:
                     initWindow()
                 addNetherCoords(clip)
                 netherSet = True
@@ -167,7 +167,6 @@ def parseClipboard(clip):
 
 
 def addNetherCoords(clip):
-    initWindow()
     f3 = clip
     f3 = f3[42:]
     f3 = f3.split()
