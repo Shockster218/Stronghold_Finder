@@ -81,11 +81,14 @@ def SecondThrowCoords(clip):
         angle0 = (angle0-270) % 360
 
     circlePoint, secThrowPoint = hitCircle(px0, pz0, angle0)
-    response = f'Suggested 2nd throw coords: ({int(secThrowPoint[0])} , {int(secThrowPoint[1])})'
+    response = f'({int(secThrowPoint[0])} , {int(secThrowPoint[1])})'
     addSecondThrow(response)
 
 
 def StrongholdCoords(clip):
+    global px0
+    global px0
+    global angle0
     global pz1
     global px1
     global angle1
@@ -109,7 +112,7 @@ def StrongholdCoords(clip):
     pxS = (b1 - b0)/(a0 - a1)
     pzS = pxS * a0 + b0
 
-    response = f'Stronghold location: ({int(pxS)} , {round(pzS)})'
+    response = f'({int(pxS)} , {int(pzS)})'
     addStrongholdCoords(response)
 
 
@@ -123,6 +126,9 @@ firstThrowSet = False
 secondThrowSet = False
 netherSet = False
 uInput = ""
+curses.start_color()
+curses.init_pair(1, curses.COLOR_RED, 0)
+curses.init_pair(2, curses.COLOR_GREEN, 0)
 
 
 def initWindow():
@@ -138,8 +144,11 @@ def initWindow():
     stdscr.addstr(0, 32, "Stronghold finder by Brandon Giannos aka Shockster_")
     stdscr.addstr(1, 5, "Coordinates for stronghold are read (x,z) and for nether (x,y,z). Please look at README.md for usage and FAQ.")
     stdscr.addstr(3, 0, "This runs nether coords: ")
+    stdscr.addstr("Not set!", curses.color_pair(1))
     stdscr.addstr(5, 0, "Suggested 2nd throw coords: ")
+    stdscr.addstr("Not set!", curses.color_pair(1))
     stdscr.addstr(6, 0, "Stronghold location: ")
+    stdscr.addstr("Not set!", curses.color_pair(1))
     stdscr.addstr(8, 0, "Input: ")
     stdscr.addstr(10, 0, "Hit [`] or Type 'reset' to reset coordinates  |  Type 'exit' to close the program")
     stdscr.move(8, 7)
@@ -175,19 +184,21 @@ def addNetherCoords(clip):
     pX = int(round(float(f3[0])))
     pY = int(round(float(f3[1])))
     pZ = int(round(float(f3[2])))
-    response = f'This runs nether coords: ({pX} , {pY}, {pZ}) '
-    stdscr.addstr(3, 0, response)
-    stdscr.move(8, 0)
+    stdscr.addstr(3, 0, 'This runs nether coords: ')
+    stdscr.addstr(f'({pX} , {pY}, {pZ})', curses.color_pair(2))
+    stdscr.move(8, 7)
 
 
 def addSecondThrow(response):
-    stdscr.addstr(5, 0, response)
-    stdscr.move(8, 0)
+    stdscr.addstr(5, 0, "Suggested 2nd throw coords: ")
+    stdscr.addstr(response, curses.color_pair(2))
+    stdscr.move(8, 7)
 
 
 def addStrongholdCoords(response):
-    stdscr.addstr(6, 0, response)
-    stdscr.move(8, 0)
+    stdscr.addstr(6, 0, "Stronghold location: ")
+    stdscr.addstr(response, curses.color_pair(2))
+    stdscr.move(8, 7)
 
 
 def addUserInput(inp):
@@ -228,4 +239,5 @@ while not exit:
         else:
             clipboard = pyperclip.paste()
             parseClipboard(clipboard)
+            pyperclip.copy("")
     stdscr.refresh()
