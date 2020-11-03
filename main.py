@@ -140,7 +140,9 @@ def initWindow():
     stdscr.addstr(3, 0, "This runs nether coords: ")
     stdscr.addstr(5, 0, "Suggested 2nd throw coords: ")
     stdscr.addstr(6, 0, "Stronghold location: ")
-    stdscr.move(8, 0)
+    stdscr.addstr(8, 0, "Input: ")
+    stdscr.addstr(10, 0, "Hit [`] or Type 'reset' to reset coordinates  |  Type 'exit' to close the program")
+    stdscr.move(8, 7)
     stdscr.refresh()
 
 
@@ -202,17 +204,17 @@ def addUserInput(inp):
             initWindow()
     elif inp == 8:
         uInput = uInput[:-1]
-        stdscr.delch(8, len(uInput))
-    elif chr(inp).isalpha():
+        stdscr.delch(8, 7 + len(uInput))
+    elif chr(inp).encode('utf-8').isalpha():
         uInput = uInput + chr(inp)
-        stdscr.addstr(8, 0, uInput)
+        stdscr.addstr(8, 0, f'Input: {uInput}')
 
 
 initWindow()
+pyperclip.copy("")
 
 
 while not exit:
-    pyperclip.copy("")
     char = stdscr.getch()
     if char != -1:
         addUserInput(char)
