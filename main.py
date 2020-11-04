@@ -230,7 +230,7 @@ while not exit:
     if char != -1:
         addUserInput(char)
     else:
-        if keyboard.is_pressed('~'):
+        if keyboard.is_pressed('g'):
             initWindow()
         try:
             pyperclip.waitForPaste(0.1)

@@ -31,7 +31,7 @@ Simply copy the coordinates (refer to handy shortcuts below) and that's it!
 
 ### Handy shortcuts
 - F3 + C (in that order): Copy coordinates to clipboard for the program.
-- Tilde Key "~" (next to 1 on keyboard): Reset the coordinates in the program.
+- "G" key: Reset the coordinates in the program.
 - Typing "reset" in console: Reset the coordinates in the program.
 - Type "exit" in console: Exits the program.
 
