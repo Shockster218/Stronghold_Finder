@@ -1,15 +1,13 @@
 <h1 align="center">Stronghold Finder</h1>
 <p align="center">My personal Minecraft Stronghold finding tool using a triangulation algorithm released for community use.</p>
 <h3 align="center">
-  <a href="#About">About</a> |
-  <a href="#Installation">Installation</a> |
-  <a href="#Usage">Usage</a> |
-  <a href="#FAQ">FAQ</a>
+  <a href="#About">About</a> •
+  <a href="#Installation">Installation</a> •
+  <a href="#Usage">Usage</a> •
+  <a href="#FAQ">FAQ</a> •
+  <a href="https://github.com/Shockster218/Stronghold_Finder/issues">Request Feature</a> •
+  <a href="https://github.com/Shockster218/Stronghold_Finder/issues">Report Bug</a>
 </h3>
-<h2 align="center">
-  <a href="https://github.com/Shockster218/Stronghold_Finder/issues">Request a feature</a> •
-  <a href="https://github.com/Shockster218/Stronghold_Finder/issues">Report a bug</a>
-<h2>
 
 # About
 Slight modification of @AlanTheBenign's stronghold finder to read directly from the clipboard. Also reads nether coords. All cases are meant for speedrunning. Any questions or concerns about the algorithm of the stronghold finder should be directed toward https://github.com/AlantheBenign/Minecraft-Stronghold-Finder.
