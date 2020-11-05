@@ -33,14 +33,17 @@ Simply copy the coordinates (refer to handy shortcuts below) and that's it!
 
 ### Handy shortcuts
 - F3 + C (in that order): Copy coordinates to clipboard for the program.
-- "G" key: Reset the coordinates in the program.
-- Typing "reset" in console: Reset the coordinates in the program.
-- Type "exit" in console: Exits the program.
+- [G] Reset program coordinates.
+- [;] Exits the program.
+- [.] Locates Fortress. (in-game command only, cheats must be enabled!)
+- [,] Locates Stronghold. (in-game command only, cheats must be enabled!)
+
+See Also: [Editing program hotkeys.](#hotkey)
 
 # FAQ 
 
 ### Why have an external program? Why not hook this directly into the client?
-The reason this process is necessary is due to the guidelines and rules for speedrunning minecraft (found [here](https://docs.google.com/document/d/1A7NtP7LegD7SYjho54gQDSlJkYZlofndjw2COu00yMU/edit) ). You are not allowed to modify or tamper with the code of the client in any shape or form.
+The reason this process is necessary is due to the guidelines and rules for speedrunning minecraft (found [here](https://docs.google.com/document/d/1A7NtP7LegD7SYjho54gQDSlJkYZlofndjw2COu00yMU/edit)). You are not allowed to modify or tamper with the code of the client in any shape or form.
 
 ### Is this allowed for speedrunning?
 Directly quoted from the speedrunning discord
@@ -54,4 +57,6 @@ Since this program does not need nor ask for your seed, it is completely legal a
 ### How accurate is the stronghold finder?
 This stronghold finding algorithm is a rather reliable tool. The main issue here is user input variance. If you aren't looking directly at the eye, calculations could be off as it is crucial to get the proper angle. Out of many tests I have done (around 50 or so), the furthest I have been from a stronghold is about 10 blocks. Keep this in mind when using the tool!
 
-### More to come in due time.
+<h3 id="hotkey">How do I change the hotkeys of the Stronghold Finder</h3>
+
+Changing the hotkeys for the program is extremely easy. Simply go to where you extracted the project, and open up "config.ini" in the root directory. There you will be able to change any keybind associated with the program to your liking.

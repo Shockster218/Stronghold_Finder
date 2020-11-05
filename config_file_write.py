@@ -7,9 +7,9 @@ config = ConfigParser()
 
 
 DEFAULT_RESET = "g"
-DEFAULT_EXIT = '.'
-DEFAULT_LOCATE_FORTRESS = "p"
-DEFAULT_LOCATE_STRONGHOLD = "l"
+DEFAULT_EXIT = ';'
+DEFAULT_LOCATE_FORTRESS = ","
+DEFAULT_LOCATE_STRONGHOLD = "."
 
 def WriteDefaultConfig():
     global config
