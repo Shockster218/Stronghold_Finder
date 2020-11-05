@@ -2,7 +2,10 @@ import numpy as np
 import pyperclip
 import keyboard
 import curses
-
+import config_file_read
+import config_file_write
+import atexit
+import time
 # hitCircle calculates where the first stronghold generation ring starts, where the player would "hit" it, moving directly forward
 # and calculates the position to the second ender eye throw
 
@@ -12,6 +15,9 @@ angle0 = 0
 pz1 = 0
 px1 = 0
 angle1 = 0
+
+
+config_file_read.InitConfig()
 
 
 def hitCircle(pX, pZ, angle):
@@ -65,9 +71,7 @@ def hitCircle(pX, pZ, angle):
 
 
 def SecondThrowCoords(clip):
-    global pz0
-    global px0
-    global angle0
+    global pz0, px0, angle0
     f3c0 = clip
     f3c0 = f3c0[42:]
     f3c0 = f3c0.split()
@@ -86,12 +90,7 @@ def SecondThrowCoords(clip):
 
 
 def StrongholdCoords(clip):
-    global px0
-    global px0
-    global angle0
-    global pz1
-    global px1
-    global angle1
+    global px0, pz0, angle0, px1, pz1, angle1
     f3c1 = clip
     f3c1 = f3c1[42:]
     f3c1 = f3c1.split()
@@ -132,10 +131,7 @@ curses.init_pair(2, curses.COLOR_GREEN, 0)
 
 
 def initWindow():
-    global secondThrowSet
-    global firstThrowSet
-    global netherSet
-    global uInput
+    global secondThrowSet, firstThrowSet, netherSet, uInput
     firstThrowSet = False
     secondThrowSet = False
     netherSet = False
@@ -149,19 +145,16 @@ def initWindow():
     stdscr.addstr("Not set!", curses.color_pair(1))
     stdscr.addstr(6, 0, "Stronghold location: ")
     stdscr.addstr("Not set!", curses.color_pair(1))
-    stdscr.addstr(8, 0, "Input: ")
-    stdscr.addstr(10, 0, "Hit [`] or Type 'reset' to reset coordinates  |  Type 'exit' to close the program")
-    stdscr.move(8, 7)
+    stdscr.addstr(8, 0, f"[{config_file_read.RESET.upper()}] Reset coordinates | [{config_file_read.EXIT.upper()}] Exit program | [{config_file_read.LOCATE_FORTRESS.upper()}] Locate fortress command | [{config_file_read.LOCATE_STRONGHOLD.upper()}] Locate stronghold command")
     stdscr.refresh()
 
 
 def parseClipboard(clip):
-    global netherSet
-    global firstThrowSet
-    global secondThrowSet
+    global netherSet, firstThrowSet, secondThrowSet
     if secondThrowSet == True:
         initWindow()
     if clip[1:21] == "execute in minecraft":
+        pyperclip.copy("")
         if clip[22:32] == "the_nether":
             if netherSet == False:
                 if firstThrowSet == True:
@@ -186,58 +179,54 @@ def addNetherCoords(clip):
     pZ = int(round(float(f3[2])))
     stdscr.addstr(3, 0, 'This runs nether coords: ')
     stdscr.addstr(f'({pX} , {pY}, {pZ})', curses.color_pair(2))
-    stdscr.move(8, 7)
 
 
 def addSecondThrow(response):
     stdscr.addstr(5, 0, "Suggested 2nd throw coords: ")
     stdscr.addstr(response, curses.color_pair(2))
-    stdscr.move(8, 7)
 
 
 def addStrongholdCoords(response):
     stdscr.addstr(6, 0, "Stronghold location: ")
     stdscr.addstr(response, curses.color_pair(2))
-    stdscr.move(8, 7)
 
 
-def addUserInput(inp):
-    global uInput
-    global exit
-    if inp == 10:
-        if uInput.lower() == "exit":
-            stdscr.keypad(False)
-            curses.echo()
-            curses.endwin()
-            stdscr.clear()
-            exit = True
-        elif uInput.lower() == "reset":
-            initWindow()
-    elif inp == 8:
-        uInput = uInput[:-1]
-        stdscr.delch(8, 7 + len(uInput))
-    elif chr(inp).encode('utf-8').isalpha():
-        uInput = uInput + chr(inp)
-        stdscr.addstr(8, 0, f'Input: {uInput}')
+def sendFortressCommand():
+    keyboard.press_and_release('t')
+    time.sleep(0.05)
+    keyboard.write('/locate fortress')
+    keyboard.press_and_release('enter')
+
+
+def sendStrongholdCommand():
+    keyboard.press_and_release('t')
+    time.sleep(0.05)
+    keyboard.write('/locate stronghold')
+    keyboard.press_and_release('enter')
+
+
+def exit_handler():
+    config_file_write.SaveConfig()
 
 
 initWindow()
 pyperclip.copy("")
+atexit.register(exit_handler)
 
 
 while not exit:
-    char = stdscr.getch()
-    if char != -1:
-        addUserInput(char)
-    else:
-        if keyboard.is_pressed('g'):
-            initWindow()
-        try:
-            pyperclip.waitForPaste(0.1)
-        except:
-            pass
-        else:
-            clipboard = pyperclip.paste()
-            parseClipboard(clipboard)
-            pyperclip.copy("")
+    if keyboard.is_pressed(config_file_read.RESET):
+         initWindow()
+    elif keyboard.is_pressed(config_file_read.EXIT):
+        exit = True
+    elif keyboard.is_pressed(config_file_read.LOCATE_FORTRESS):
+        sendFortressCommand()
+    elif keyboard.is_pressed(config_file_read.LOCATE_STRONGHOLD):
+        sendStrongholdCommand()
+    try:
+        pyperclip.waitForPaste(0.1)
+        clipboard = pyperclip.paste()
+        parseClipboard(clipboard)
+    except:
+        pass
     stdscr.refresh()
