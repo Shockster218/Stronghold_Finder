@@ -1,9 +1,9 @@
-<h1 align="center"><img src="img/icon.ico"/>     Stronghold Finder</h1>
+<h1 align="center">Stronghold Finder</h1>
 <p align="center">My personal Minecraft Stronghold finding tool using a triangulation algorithm released for community use.</p>
 <h3 align="center">
   <a href="#About">About</a> |
   <a href="#Installation">Installation</a> |
-  <a href="#Usage">Usage |</a>
+  <a href="#Usage">Usage</a> |
   <a href="#FAQ">FAQ</a>
 </h3>
 
