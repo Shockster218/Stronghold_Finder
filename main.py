@@ -138,18 +138,18 @@ def initWindow(saveCoords=False):
         firstThrowSet = False
         secondThrowSet = False
         netherSet = False
-        netherPortal = ("Not set!", netherPortal)[resize]
-        suggestedSecThrow = ("Not set!", suggestedSecThrow)[resize]
-        strongholdLoc = ("Not set!", strongholdLoc)[resize]
+        netherPortal = ("Not set!", netherPortal)[saveCoords]
+        suggestedSecThrow = ("Not set!", suggestedSecThrow)[saveCoords]
+        strongholdLoc = ("Not set!", strongholdLoc)[saveCoords]
         stdscr.clear()
         stdscr.addstr(0, 32, "Stronghold finder by Brandon Giannos aka Shockster_")
         stdscr.addstr(1, 5, "Coordinates for stronghold are read (x,z) and for nether (x,y,z). Please look at README.md for usage and FAQ.")
         stdscr.addstr(3, 0, "This runs nether coords: ")
-        stdscr.addstr(("Not set!", netherPortal)[resize], (curses.color_pair(1), curses.color_pair(2))[netherPortal != "Not set!"])
+        stdscr.addstr(("Not set!", netherPortal)[saveCoords], (curses.color_pair(1), curses.color_pair(2))[netherPortal != "Not set!"])
         stdscr.addstr(5, 0, "Suggested 2nd throw coords: ")
-        stdscr.addstr(("Not set!", suggestedSecThrow)[resize], (curses.color_pair(1), curses.color_pair(2))[suggestedSecThrow != "Not set!"])
+        stdscr.addstr(("Not set!", suggestedSecThrow)[saveCoords], (curses.color_pair(1), curses.color_pair(2))[suggestedSecThrow != "Not set!"])
         stdscr.addstr(6, 0, "Stronghold location: ")
-        stdscr.addstr(("Not set!", strongholdLoc)[resize], (curses.color_pair(1), curses.color_pair(2))[strongholdLoc != "Not set!"])
+        stdscr.addstr(("Not set!", strongholdLoc)[saveCoords], (curses.color_pair(1), curses.color_pair(2))[strongholdLoc != "Not set!"])
         stdscr.addstr(8, 0, f"[{config_file_read.RESET.upper()}] Reset coordinates | [{config_file_read.EXIT.upper()}] Exit program | [{config_file_read.LOCATE_FORTRESS.upper()}] Locate fortress command | [{config_file_read.LOCATE_STRONGHOLD.upper()}] Locate stronghold command")
         stdscr.refresh()
     except:
