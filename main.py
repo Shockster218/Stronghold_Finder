@@ -16,7 +16,6 @@ pz1 = 0
 px1 = 0
 angle1 = 0
 
-
 config_file_read.InitConfig()
 
 
@@ -39,7 +38,7 @@ def hitCircle(pX, pZ, angle):
         x2 = np.linspace(xHit, xHit+100, 500)
         a2 = -1/np.tan(angle*np.pi/180)
         b2 = yHit - xHit * a2
-        y2 = a2*x2 + b2
+        y2 = a2 * x2 + b2
         for i in range(len(x2)):
             if abs(x2[i] - xHit)**2 + abs(y2[i] - yHit)**2 >= 42*42:
                 xST = x2[i]
@@ -85,7 +84,7 @@ def SecondThrowCoords(clip):
         angle0 = (angle0-270) % 360
 
     circlePoint, secThrowPoint = hitCircle(px0, pz0, angle0)
-    response = f'({int(secThrowPoint[0])} , {int(secThrowPoint[1])})'
+    response = f'({int(secThrowPoint[0])} , {int(secThrowPoint[1])}) with angle {angle0}'
     addSecondThrow(response)
 
 
@@ -111,54 +110,59 @@ def StrongholdCoords(clip):
     pxS = (b1 - b0)/(a0 - a1)
     pzS = pxS * a0 + b0
 
-    response = f'({int(pxS)} , {int(pzS)})'
+    response = f'({int(pxS)} , {int(pzS)}) with angle {angle1}'
     addStrongholdCoords(response)
 
 
 stdscr = curses.initscr()
-curses.noecho()
-curses.cbreak()
 stdscr.nodelay(1)
 stdscr.keypad(True)
-exit = False
-firstThrowSet = False
-secondThrowSet = False
-netherSet = False
-uInput = ""
+curses.noecho()
+curses.cbreak()
 curses.start_color()
 curses.init_pair(1, curses.COLOR_RED, 0)
 curses.init_pair(2, curses.COLOR_GREEN, 0)
 
+exit = False
+firstThrowSet = False
+secondThrowSet = False
+netherSet = False
+netherPortal = "Not set!"
+suggestedSecThrow = "Not set!"
+strongholdLoc = "Not set!"
 
-def initWindow():
-    global secondThrowSet, firstThrowSet, netherSet, uInput
-    firstThrowSet = False
-    secondThrowSet = False
-    netherSet = False
-    uInput = ""
-    stdscr.clear()
-    stdscr.addstr(0, 32, "Stronghold finder by Brandon Giannos aka Shockster_")
-    stdscr.addstr(1, 5, "Coordinates for stronghold are read (x,z) and for nether (x,y,z). Please look at README.md for usage and FAQ.")
-    stdscr.addstr(3, 0, "This runs nether coords: ")
-    stdscr.addstr("Not set!", curses.color_pair(1))
-    stdscr.addstr(5, 0, "Suggested 2nd throw coords: ")
-    stdscr.addstr("Not set!", curses.color_pair(1))
-    stdscr.addstr(6, 0, "Stronghold location: ")
-    stdscr.addstr("Not set!", curses.color_pair(1))
-    stdscr.addstr(8, 0, f"[{config_file_read.RESET.upper()}] Reset coordinates | [{config_file_read.EXIT.upper()}] Exit program | [{config_file_read.LOCATE_FORTRESS.upper()}] Locate fortress command | [{config_file_read.LOCATE_STRONGHOLD.upper()}] Locate stronghold command")
-    stdscr.refresh()
+
+def initWindow(saveCoords=False):
+    try:
+        global secondThrowSet, firstThrowSet, netherSet, netherPortal, suggestedSecThrow, strongholdLoc
+        firstThrowSet = False
+        secondThrowSet = False
+        netherSet = False
+        netherPortal = ("Not set!", netherPortal)[resize]
+        suggestedSecThrow = ("Not set!", suggestedSecThrow)[resize]
+        strongholdLoc = ("Not set!", strongholdLoc)[resize]
+        stdscr.clear()
+        stdscr.addstr(0, 32, "Stronghold finder by Brandon Giannos aka Shockster_")
+        stdscr.addstr(1, 5, "Coordinates for stronghold are read (x,z) and for nether (x,y,z). Please look at README.md for usage and FAQ.")
+        stdscr.addstr(3, 0, "This runs nether coords: ")
+        stdscr.addstr(("Not set!", netherPortal)[resize], (curses.color_pair(1), curses.color_pair(2))[netherPortal != "Not set!"])
+        stdscr.addstr(5, 0, "Suggested 2nd throw coords: ")
+        stdscr.addstr(("Not set!", suggestedSecThrow)[resize], (curses.color_pair(1), curses.color_pair(2))[suggestedSecThrow != "Not set!"])
+        stdscr.addstr(6, 0, "Stronghold location: ")
+        stdscr.addstr(("Not set!", strongholdLoc)[resize], (curses.color_pair(1), curses.color_pair(2))[strongholdLoc != "Not set!"])
+        stdscr.addstr(8, 0, f"[{config_file_read.RESET.upper()}] Reset coordinates | [{config_file_read.EXIT.upper()}] Exit program | [{config_file_read.LOCATE_FORTRESS.upper()}] Locate fortress command | [{config_file_read.LOCATE_STRONGHOLD.upper()}] Locate stronghold command")
+        stdscr.refresh()
+    except:
+        pass
 
 
 def parseClipboard(clip):
     global netherSet, firstThrowSet, secondThrowSet
-    if secondThrowSet == True:
-        initWindow()
     if clip[1:21] == "execute in minecraft":
         pyperclip.copy("")
         if clip[22:32] == "the_nether":
             if netherSet == False:
-                if firstThrowSet == True:
-                    initWindow()
+                initWindow()
                 addNetherCoords(clip)
                 netherSet = True
         else:
@@ -171,6 +175,7 @@ def parseClipboard(clip):
 
 
 def addNetherCoords(clip):
+    global netherPortal
     f3 = clip
     f3 = f3[42:]
     f3 = f3.split()
@@ -179,16 +184,21 @@ def addNetherCoords(clip):
     pZ = int(round(float(f3[2])))
     stdscr.addstr(3, 0, 'This runs nether coords: ')
     stdscr.addstr(f'({pX} , {pY}, {pZ})', curses.color_pair(2))
+    netherPortal = f'({pX} , {pY}, {pZ})'
 
 
 def addSecondThrow(response):
+    global suggestedSecThrow
     stdscr.addstr(5, 0, "Suggested 2nd throw coords: ")
     stdscr.addstr(response, curses.color_pair(2))
+    suggestedSecThrow = response
 
 
 def addStrongholdCoords(response):
+    global strongholdLoc
     stdscr.addstr(6, 0, "Stronghold location: ")
     stdscr.addstr(response, curses.color_pair(2))
+    strongholdLoc = response
 
 
 def sendFortressCommand():
@@ -229,4 +239,8 @@ while not exit:
         parseClipboard(clipboard)
     except:
         pass
-    stdscr.refresh()
+    if stdscr.getch() == curses.KEY_RESIZE:
+        curses.resize_term(*stdscr.getmaxyx())
+        initWindow(saveCoords=True)
+
+
