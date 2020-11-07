@@ -2,24 +2,32 @@ import numpy as np
 import pyperclip
 import keyboard
 import curses
-import config_file_read
-import config_file_write
 import atexit
 import time
-# hitCircle calculates where the first stronghold generation ring starts, where the player would "hit" it, moving directly forward
+import config_file_read as r
+import config_file_write as w
+import win32gui
+import win32con
+
+
+posZFirThr = 0
+posXFirThr = 0
+angleFirThr = 0
+posZSecThr = 0
+posXSecThr = 0
+angleSecThr = 0
+
+configLoaded = r.initConfig()
+
+try:
+    hWnd = win32gui.GetForegroundWindow()
+    win32gui.SetWindowPos(hWnd, win32con.HWND_TOPMOST, 0, 0, r.WINDOW_WIDTH, r.WINDOW_HEIGHT, win32con.SWP_NOMOVE)
+except:
+    pass
+
+# Calculates where the first stronghold generation ring starts, where the player would "hit" it, moving directly forward
 # and calculates the position to the second ender eye throw
-
-pz0 = 0
-px0 = 0
-angle0 = 0
-pz1 = 0
-px1 = 0
-angle1 = 0
-
-config_file_read.InitConfig()
-
-
-def hitCircle(pX, pZ, angle):
+def calculateSecondThrowPosition(pX, pZ, angle):
     xHit = None
     yHit = None
     cos = np.cos(angle*np.pi/180)
@@ -34,7 +42,6 @@ def hitCircle(pX, pZ, angle):
                 xHit = x[i]
                 yHit = y[i]
                 break
-        pos1 = (xHit, yHit)
         x2 = np.linspace(xHit, xHit+100, 500)
         a2 = -1/np.tan(angle*np.pi/180)
         b2 = yHit - xHit * a2
@@ -43,7 +50,7 @@ def hitCircle(pX, pZ, angle):
             if abs(x2[i] - xHit)**2 + abs(y2[i] - yHit)**2 >= 42*42:
                 xST = x2[i]
                 yST = y2[i]
-        pos2 = (xST, yST)
+        pos = (xST, yST)
     # if the stronghold is at the -X
     else:
         x = np.linspace(pX+10, -2700, 2700)
@@ -55,7 +62,6 @@ def hitCircle(pX, pZ, angle):
                 xHit = x[i]
                 yHit = y[i]
                 break
-        pos1 = (xHit, yHit)
         x2 = np.linspace(xHit, xHit+100, 500)
         a2 = -1/np.tan(angle*np.pi/180)
         b2 = yHit - xHit * a2
@@ -64,64 +70,70 @@ def hitCircle(pX, pZ, angle):
             if abs(x2[i] - xHit)**2 + abs(y2[i] - yHit)**2 >= 42*42:
                 xST = x2[i]
                 yST = y2[i]
-        pos2 = (xST, yST)
+        pos = (xST, yST)
 
-    return (pos1, pos2)
+    return (pos)
 
 
-def SecondThrowCoords(clip):
-    global pz0, px0, angle0
-    f3c0 = clip
-    f3c0 = f3c0[42:]
-    f3c0 = f3c0.split()
-    px0 = float(f3c0[0])
-    pz0 = float(f3c0[2])
-    angle0 = float(f3c0[3]) % 360
+def secondThrowCoords(clip):
+    global posZFirThr, posXFirThr, angleFirThr
+    f3Clip = clip[42:].split()
+    posXFirThr = float(f3Clip[0])
+    posZFirThr = float(f3Clip[2])
+    angleFirThr = float(f3Clip[3]) % 360
 
-    if angle0 >= 0:
-        angle0 = (angle0+90) % 360
+    displayAngle = (angleFirThr, -180 + (angleFirThr - 180))[angleFirThr > 180]
+
+    if angleFirThr >= 0:
+        angleFirThr = (angleFirThr+90) % 360
     else:
-        angle0 = (angle0-270) % 360
+        angleFirThr = (angleFirThr-270) % 360
 
-    circlePoint, secThrowPoint = hitCircle(px0, pz0, angle0)
-    response = f'({int(secThrowPoint[0])} , {int(secThrowPoint[1])}) with angle {angle0}'
+    secThrowPoint = calculateSecondThrowPosition(posXFirThr, posZFirThr, angleFirThr)
+    response = f'({int(secThrowPoint[0])} , {int(secThrowPoint[1])}) with angle {round(displayAngle, 1)}'
     addSecondThrow(response)
 
 
-def StrongholdCoords(clip):
-    global px0, pz0, angle0, px1, pz1, angle1
-    f3c1 = clip
-    f3c1 = f3c1[42:]
-    f3c1 = f3c1.split()
-    px1 = float(f3c1[0])
-    pz1 = float(f3c1[2])
-    angle1 = float(f3c1[3]) % 360
+def strongholdCoords(clip):
+    global posXFirThr, posZFirThr, angleFirThr, posXSecThr, posZSecThr, angleSecThr
+    f3Clip = clip[42:].split()
+    posXSecThr = float(f3Clip[0])
+    posZSecThr = float(f3Clip[2])
+    angleSecThr = float(f3Clip[3]) % 360
 
-    if angle1 >= 0:
-        angle1 = (angle1+90) % 360
+    displayAngle = (angleSecThr, -180 + (angleSecThr - 180))[angleSecThr > 180]
+
+    if angleSecThr >= 0:
+        angleSecThr = (angleSecThr+90) % 360
     else:
-        angle1 = (angle1-270) % 360
+        angleSecThr = (angleSecThr-270) % 360
 
     # calculating stronghold position
-    a0 = np.tan(angle0*np.pi/180)
-    a1 = np.tan(angle1*np.pi/180)
-    b0 = pz0 - px0 * a0
-    b1 = pz1 - px1 * a1
-    pxS = (b1 - b0)/(a0 - a1)
-    pzS = pxS * a0 + b0
+    a0 = np.tan(angleFirThr*np.pi/180)
+    a1 = np.tan(angleSecThr*np.pi/180)
+    b0 = posZFirThr - posXFirThr * a0
+    b1 = posZSecThr - posXSecThr * a1
+    posXStrong = (b1 - b0)/(a0 - a1)
+    posZStrong = posXStrong * a0 + b0
 
-    response = f'({int(pxS)} , {int(pzS)}) with angle {angle1}'
+    # Stronghold 4,4 rule (stronghold stairs are on 4th block of chunk x and z)
+    newPosXStrong = posXStrong - (posXStrong % 16) + (-12, 4)[int(posXStrong) % 16 > 0]
+    newPosZStrong = posZStrong - (posZStrong % 16) + (-12, 4)[int(posZStrong) % 16 > 0]
+
+    response = f'({int(newPosXStrong)} , {int(newPosZStrong)}) with angle {round(displayAngle, 1)}'
     addStrongholdCoords(response)
 
 
-stdscr = curses.initscr()
-stdscr.nodelay(1)
-stdscr.keypad(True)
+screen = curses.initscr()
+screen.nodelay(1)
+screen.keypad(True)
 curses.noecho()
 curses.cbreak()
 curses.start_color()
 curses.init_pair(1, curses.COLOR_RED, 0)
 curses.init_pair(2, curses.COLOR_GREEN, 0)
+curses.init_pair(3, curses.COLOR_CYAN, 0)
+
 
 exit = False
 firstThrowSet = False
@@ -135,23 +147,23 @@ strongholdLoc = "Not set!"
 def initWindow(saveCoords=False):
     try:
         global secondThrowSet, firstThrowSet, netherSet, netherPortal, suggestedSecThrow, strongholdLoc
-        firstThrowSet = False
-        secondThrowSet = False
-        netherSet = False
+        firstThrowSet = (False, firstThrowSet)[saveCoords]
+        secondThrowSet = (False, secondThrowSet)[saveCoords]
+        netherSet = (False, netherSet)[saveCoords]
         netherPortal = ("Not set!", netherPortal)[saveCoords]
         suggestedSecThrow = ("Not set!", suggestedSecThrow)[saveCoords]
         strongholdLoc = ("Not set!", strongholdLoc)[saveCoords]
-        stdscr.clear()
-        stdscr.addstr(0, 32, "Stronghold finder by Brandon Giannos aka Shockster_")
-        stdscr.addstr(1, 5, "Coordinates for stronghold are read (x,z) and for nether (x,y,z). Please look at README.md for usage and FAQ.")
-        stdscr.addstr(3, 0, "This runs nether coords: ")
-        stdscr.addstr(("Not set!", netherPortal)[saveCoords], (curses.color_pair(1), curses.color_pair(2))[netherPortal != "Not set!"])
-        stdscr.addstr(5, 0, "Suggested 2nd throw coords: ")
-        stdscr.addstr(("Not set!", suggestedSecThrow)[saveCoords], (curses.color_pair(1), curses.color_pair(2))[suggestedSecThrow != "Not set!"])
-        stdscr.addstr(6, 0, "Stronghold location: ")
-        stdscr.addstr(("Not set!", strongholdLoc)[saveCoords], (curses.color_pair(1), curses.color_pair(2))[strongholdLoc != "Not set!"])
-        stdscr.addstr(8, 0, f"[{config_file_read.RESET.upper()}] Reset coordinates | [{config_file_read.EXIT.upper()}] Exit program | [{config_file_read.LOCATE_FORTRESS.upper()}] Locate fortress command | [{config_file_read.LOCATE_STRONGHOLD.upper()}] Locate stronghold command")
-        stdscr.refresh()
+        screen.clear()
+        screen.addstr(0, 15, "Stronghold finder by Brandon G aka Shockster_", curses.color_pair(3))
+        screen.addstr(2, 2, "This runs nether coords: ")
+        screen.addstr(("Not set!", netherPortal)[saveCoords], (curses.color_pair(1), curses.color_pair(2))[netherPortal != "Not set!"])
+        screen.addstr(5, 2, "Suggested 2nd throw coords: ")
+        screen.addstr(("Not set!", suggestedSecThrow)[saveCoords], (curses.color_pair(1), curses.color_pair(2))[suggestedSecThrow != "Not set!"])
+        screen.addstr(6, 2, "Stronghold location: ")
+        screen.addstr(("Not set!", strongholdLoc)[saveCoords], (curses.color_pair(1), curses.color_pair(2))[strongholdLoc != "Not set!"])
+        screen.addstr(8, 2, f"[{r.RESET.upper()}] Reset coordinates | [{r.EXIT.upper()}] Exit program")
+        screen.addstr(9, 2, f"[{r.LOCATE_FORTRESS.upper()}] Locate fortress command | [{r.LOCATE_STRONGHOLD.upper()}] Locate stronghold command")
+        screen.refresh()
     except:
         pass
 
@@ -167,37 +179,35 @@ def parseClipboard(clip):
                 netherSet = True
         else:
             if firstThrowSet == True:
-                StrongholdCoords(clip)
+                strongholdCoords(clip)
                 secondThrowSet = True
             else:
-                SecondThrowCoords(clip)
+                secondThrowCoords(clip)
                 firstThrowSet = True
 
 
 def addNetherCoords(clip):
     global netherPortal
-    f3 = clip
-    f3 = f3[42:]
-    f3 = f3.split()
+    f3 = f3[42:].split()
     pX = int(round(float(f3[0])))
     pY = int(round(float(f3[1])))
     pZ = int(round(float(f3[2])))
-    stdscr.addstr(3, 0, 'This runs nether coords: ')
-    stdscr.addstr(f'({pX} , {pY}, {pZ})', curses.color_pair(2))
+    screen.addstr(3, 2, 'This runs nether coords: ')
+    screen.addstr(f'({pX} , {pY}, {pZ})', curses.color_pair(2))
     netherPortal = f'({pX} , {pY}, {pZ})'
 
 
 def addSecondThrow(response):
     global suggestedSecThrow
-    stdscr.addstr(5, 0, "Suggested 2nd throw coords: ")
-    stdscr.addstr(response, curses.color_pair(2))
+    screen.addstr(5, 2, "Suggested 2nd throw coords: ")
+    screen.addstr(response, curses.color_pair(2))
     suggestedSecThrow = response
 
 
 def addStrongholdCoords(response):
     global strongholdLoc
-    stdscr.addstr(6, 0, "Stronghold location: ")
-    stdscr.addstr(response, curses.color_pair(2))
+    screen.addstr(6, 2, "Stronghold location: ")
+    screen.addstr(response, curses.color_pair(2))
     strongholdLoc = response
 
 
@@ -215,32 +225,39 @@ def sendStrongholdCommand():
     keyboard.press_and_release('enter')
 
 
+def endProgram():
+    global exit, hWnd
+    try:
+        win32gui.SetWindowPos(hWnd, win32con.HWND_NOTOPMOST, 0, 0, 0, 0, win32con.SWP_NOMOVE | win32con.SWP_NOSIZE)
+    except:
+        pass
+    exit = True
+
+
 def exit_handler():
-    config_file_write.SaveConfig()
+    global screen
+    w.SaveConfig(screen)
 
 
 initWindow()
 pyperclip.copy("")
+
+
+keyboard.on_release_key(r.RESET, lambda x=None: initWindow())
+keyboard.on_release_key(r.LOCATE_FORTRESS, lambda x=None: sendFortressCommand())
+keyboard.on_release_key(r.LOCATE_STRONGHOLD, lambda x=None: sendStrongholdCommand())
+keyboard.add_hotkey(r.EXIT, lambda: endProgram())
 atexit.register(exit_handler)
 
 
 while not exit:
-    if keyboard.is_pressed(config_file_read.RESET):
-         initWindow()
-    elif keyboard.is_pressed(config_file_read.EXIT):
-        exit = True
-    elif keyboard.is_pressed(config_file_read.LOCATE_FORTRESS):
-        sendFortressCommand()
-    elif keyboard.is_pressed(config_file_read.LOCATE_STRONGHOLD):
-        sendStrongholdCommand()
     try:
-        pyperclip.waitForPaste(0.1)
+        pyperclip.waitForNewPaste(0.1)
         clipboard = pyperclip.paste()
         parseClipboard(clipboard)
     except:
         pass
-    if stdscr.getch() == curses.KEY_RESIZE:
-        curses.resize_term(*stdscr.getmaxyx())
+
+    if screen.getch() == curses.KEY_RESIZE:
+        curses.resize_term(*screen.getmaxyx())
         initWindow(saveCoords=True)
-
-
