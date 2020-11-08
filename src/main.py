@@ -8,14 +8,8 @@ import win32gui
 import win32con
 from config import config_file_read as r
 from config import config_file_write as w
-
-
-posZFirThr = 0
-posXFirThr = 0
-angleFirThr = 0
-posZSecThr = 0
-posXSecThr = 0
-angleSecThr = 0
+from math import calculator
+from math import coordinate_finder as cf
 
 configLoaded = r.initConfig()
 
