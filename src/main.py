@@ -4,10 +4,10 @@ import keyboard
 import curses
 import atexit
 import time
-import config_file_read as r
-import config_file_write as w
 import win32gui
 import win32con
+from config import config_file_read as r
+from config import config_file_write as w
 
 
 posZFirThr = 0
@@ -82,7 +82,8 @@ def secondThrowCoords(clip):
     posZFirThr = float(f3Clip[2])
     angleFirThr = float(f3Clip[3]) % 360
 
-    displayAngle = (angleFirThr, -180 + (angleFirThr - 180))[angleFirThr > 180]
+    #This is wrong, this displays angle to stronghold not angle to suggested throw.
+    #displayAngle = (angleFirThr, -180 + (angleFirThr - 180))[angleFirThr > 180]
 
     if angleFirThr >= 0:
         angleFirThr = (angleFirThr+90) % 360
@@ -90,7 +91,7 @@ def secondThrowCoords(clip):
         angleFirThr = (angleFirThr-270) % 360
 
     secThrowPoint = calculateSecondThrowPosition(posXFirThr, posZFirThr, angleFirThr)
-    response = f'({int(secThrowPoint[0])} , {int(secThrowPoint[1])}) with angle {round(displayAngle, 1)}'
+    response = f'({int(secThrowPoint[0])} , {int(secThrowPoint[1])})'
     addSecondThrow(response)
 
 
@@ -101,6 +102,8 @@ def strongholdCoords(clip):
     posZSecThr = float(f3Clip[2])
     angleSecThr = float(f3Clip[3]) % 360
 
+    #This is good, displays angle to stronghold. Should move elsewhere during refactor
+    # For exmaple Calculator.calculateAngleToStronghold
     displayAngle = (angleSecThr, -180 + (angleSecThr - 180))[angleSecThr > 180]
 
     if angleSecThr >= 0:
@@ -228,7 +231,7 @@ def sendStrongholdCommand():
 def endProgram():
     global exit, hWnd
     try:
-        win32gui.SetWindowPos(hWnd, win32con.HWND_NOTOPMOST, 0, 0, 0, 0, win32con.SWP_NOMOVE | win32con.SWP_NOSIZE)
+        win32gui.SetWindowPos(hWnd, win32con.HWND_NOTOPMOST, 0, 0, 0, 0)
     except:
         pass
     exit = True

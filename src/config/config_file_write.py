@@ -1,7 +1,7 @@
 from configparser import ConfigParser
 from os import path
-import config_file_read as r
-import config_helper as helper
+from config import config_file_read as r
+from config import config_helper as helper
 
 
 config = ConfigParser()

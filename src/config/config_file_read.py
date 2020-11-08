@@ -1,6 +1,6 @@
 from configparser import ConfigParser
 from os import path
-import config_file_write as w
+from config import config_file_write as w
 
 
 parser = ConfigParser()

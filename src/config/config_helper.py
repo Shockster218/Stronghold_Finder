@@ -1,5 +1,5 @@
-import config_file_read as r
-import config_file_write as w
+from config import config_file_read as r
+from config import config_file_write as w
 import win32gui
 
 def getWindowWidth():
