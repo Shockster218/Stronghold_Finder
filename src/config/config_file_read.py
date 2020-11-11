@@ -14,9 +14,8 @@ WINDOW_WIDTH = 0
 WINDOW_HEIGHT = 0
 
 
-def initConfig():
+def init():
     parseConfig()
-    return True
 
 
 def parseConfig():

@@ -43,8 +43,28 @@ def calculateSecondThrowCoordinates(xHit, yHit, angle):
     return (xSecThr, ySecThr)
 
 
+def calculateStrongholdCoordinates(xFirThr, zFirThr, angleFirThr, xSecThr, zSecThr, angleSecThr):
+    if angleSecThr >= 0:
+        angleSecThr = (angleSecThr+90) % 360
+    else:
+        angleSecThr = (angleSecThr-270) % 360
+
+    # calculate stronghold position
+    a0 = np.tan(angleFirThr*np.pi/180)
+    a1 = np.tan(angleSecThr*np.pi/180)
+    b0 = zFirThr - xFirThr * a0
+    b1 = zSecThr - xSecThr * a1
+    xStronghold = (b1 - b0)/(a0 - a1)
+    zStronghold = xStronghold * a0 + b0
+    return (xStronghold, zStronghold)
+
+
 def calculateAngleAToB(aX, aY, bX, bY):
-    angle = np.arctan2(ax - ay, bx - by) * (180.0 / Math.PI)
+    angle = np.arctan2(ax - ay, bx - by)
+    angle = (-(angle / np.pi) * 360) / 2 + 180
     angle = (angle, -180 + (angle - 180))[angle > 180]
     return angle
     
+
+def roundNetherCoordinates(x, y, z):
+    return (int(round(x)), int(round(y)), int(round(z)))

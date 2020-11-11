@@ -1,0 +1,97 @@
+import win32gui
+import win32con
+import curses
+from config import config_file_read as r
+from config import config_file_write as w
+
+hWnd = None
+screen = None
+nether = None
+suggestion = None
+stronghold = None
+close = False
+netherStatic = "This runs nether coords: "
+suggestionStatic = "Suggested 2nd throw coords: "
+strongholdStatic = "Stronghold location: "
+
+
+def init():
+    global hWnd
+    try:
+        hWnd = win32gui.GetForegroundWindow()
+        win32gui.SetWindowPos(hWnd, win32con.HWND_TOPMOST, 0, 0, r.WINDOW_WIDTH, r.WINDOW_HEIGHT, win32con.SWP_NOMOVE)
+    except:
+        pass
+    initScreen()
+    drawScreen()
+
+
+def initScreen():
+    global screen
+    screen = curses.initscr()
+    screen.nodelay(1)
+    screen.keypad(True)
+    curses.noecho()
+    curses.cbreak()
+    curses.start_color()
+    curses.init_pair(1, curses.COLOR_RED, 0)
+    curses.init_pair(2, curses.COLOR_GREEN, 0)
+    curses.init_pair(3, curses.COLOR_CYAN, 0)
+
+
+def drawScreen(redraw=False):
+    global nether, suggestion, stronghold
+    nether = ("Not set!", nether)[redraw]
+    suggestion = ("Not set!", suggestion)[redraw]
+    stronghold = ("Not set!", stronghold)[redraw]
+    screen.clear()
+    screen.addstr(0, 15, "Stronghold finder by Brandon G aka Shockster_", curses.color_pair(3))
+    screen.addstr(2, 2, netherStatic)
+    screen.addstr(("Not set!", nether)[redraw], (curses.color_pair(1), curses.color_pair(2))[nether != "Not set!"])
+    screen.addstr(5, 2, suggestionStatic)
+    screen.addstr(("Not set!", suggestion)[redraw], (curses.color_pair(1), curses.color_pair(2))[suggestion != "Not set!"])
+    screen.addstr(6, 2, strongholdStatic)
+    screen.addstr(("Not set!", stronghold)[redraw], (curses.color_pair(1), curses.color_pair(2))[stronghold != "Not set!"])
+    screen.addstr(8, 2, f"[{r.RESET.upper()}] Reset coordinates | [{r.EXIT.upper()}] Exit program")
+    screen.addstr(9, 2, f"[{r.LOCATE_FORTRESS.upper()}] Locate fortress command | [{r.LOCATE_STRONGHOLD.upper()}] Locate stronghold command")
+    screen.refresh()
+
+
+def addNether(x, y, z):
+    screen.addstr(3, 2, netherStatic)
+    screen.addstr(f'X:{x}, Y:{y}, Z:{z}', curses.color_pair(2))
+    screen.refresh()
+
+
+def addSuggestion(x, y, angle):
+    screen.addstr(5, 2, suggestionStatic)
+    screen.addstr(f'X:{x}, Z:{z} with angle {angle}', curses.color_pair(2))
+    screen.refresh()
+
+
+def addStronghold(x, y, angle):
+    screen.addstr(6, 2, strongholdStatic)
+    screen.addstr(f'X:{x}, Z:{z} with angle {angle}', curses.color_pair(2))
+    screen.refresh()
+
+
+def onExit():
+    global close
+    try:
+        win32gui.SetWindowPos(hWnd, win32con.HWND_NOTOPMOST, 0, 0, 0, 0)
+    except:
+        pass
+    w.SaveConfig(screen)
+    close = True
+
+
+def getch():
+    return screen.getch()
+
+
+def getmaxyx():
+    return screen.getmaxyx()
+
+
+def checkExit():
+    return close
