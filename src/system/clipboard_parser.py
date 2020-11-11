@@ -18,26 +18,28 @@ def clear():
 def handleClipboard(clipboard):
     global netherSet, firstThrowSet, secondThrowSet
     if isMinecraftClipboard(clipboard):
-        pyperclip.copy("")
         parseClipboard(clipboard)
+        pyperclip.copy("")
 
 
 def parseClipboard(clipboard):
+    global netherSet, firstThrowSet, secondThrowSet
     f3 = clipboard[42:].split()
     x = float(f3[0])
     y = float(f3[1])
     z = float(f3[2])
     angle = float(f3[3]) % 360
+    angle = ((angle-270) % 360, (angle + 90) % 360)[angle >= 0]
     if inNether(clipboard):
         if netherSet == False:
             wm.addNether(*calculator.roundNetherCoordinates(x, y ,z))
             netherSet = True
     else:
         if firstThrowSet == True:
-            wm.addSuggestion(*coordinate_finder.findStronghold(x, z, angle))
+            wm.addStronghold(*coordinate_finder.findStronghold(x, z, angle))
             secondThrowSet = True
         else:
-            wm.addStronghold(*coordinate_finder.findSecondSuggestedThrow(x, y, angle))
+            wm.addSuggestion(*coordinate_finder.findSecondSuggestedThrow(x, z, angle))
             firstThrowSet = True
 
 

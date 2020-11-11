@@ -3,6 +3,7 @@ import win32con
 import curses
 from config import config_file_read as r
 from config import config_file_write as w
+from system import clipboard_parser as parser
 
 hWnd = None
 screen = None
@@ -48,30 +49,32 @@ def drawScreen(redraw=False):
     screen.addstr(0, 15, "Stronghold finder by Brandon G aka Shockster_", curses.color_pair(3))
     screen.addstr(2, 2, netherStatic)
     screen.addstr(("Not set!", nether)[redraw], (curses.color_pair(1), curses.color_pair(2))[nether != "Not set!"])
-    screen.addstr(5, 2, suggestionStatic)
+    screen.addstr(4, 2, suggestionStatic)
     screen.addstr(("Not set!", suggestion)[redraw], (curses.color_pair(1), curses.color_pair(2))[suggestion != "Not set!"])
-    screen.addstr(6, 2, strongholdStatic)
+    screen.addstr(5, 2, strongholdStatic)
     screen.addstr(("Not set!", stronghold)[redraw], (curses.color_pair(1), curses.color_pair(2))[stronghold != "Not set!"])
-    screen.addstr(8, 2, f"[{r.RESET.upper()}] Reset coordinates | [{r.EXIT.upper()}] Exit program")
-    screen.addstr(9, 2, f"[{r.LOCATE_FORTRESS.upper()}] Locate fortress command | [{r.LOCATE_STRONGHOLD.upper()}] Locate stronghold command")
+    screen.addstr(7, 2, f"[{r.RESET.upper()}] Reset coordinates | [{r.EXIT.upper()}] Exit program")
+    screen.addstr(8, 2, f"[{r.LOCATE_FORTRESS.upper()}] Locate fortress command | [{r.LOCATE_STRONGHOLD.upper()}] Locate stronghold command")
     screen.refresh()
+    if not redraw:
+        parser.clear()
 
 
 def addNether(x, y, z):
-    screen.addstr(3, 2, netherStatic)
+    screen.addstr(2, 2, netherStatic)
     screen.addstr(f'X:{x}, Y:{y}, Z:{z}', curses.color_pair(2))
     screen.refresh()
 
 
-def addSuggestion(x, y, angle):
-    screen.addstr(5, 2, suggestionStatic)
-    screen.addstr(f'X:{x}, Z:{z} with angle {angle}', curses.color_pair(2))
+def addSuggestion(x, z, angle):
+    screen.addstr(4, 2, suggestionStatic)
+    screen.addstr(f'X:{int(round(x))}, Z:{int(round(z))} with angle {round(angle, 1)}', curses.color_pair(2))
     screen.refresh()
 
 
-def addStronghold(x, y, angle):
-    screen.addstr(6, 2, strongholdStatic)
-    screen.addstr(f'X:{x}, Z:{z} with angle {angle}', curses.color_pair(2))
+def addStronghold(x, z, angle):
+    screen.addstr(5, 2, strongholdStatic)
+    screen.addstr(f'X:{int(round(x))}, Z:{int(round(z))} with angle {round(angle, 1)}', curses.color_pair(2))
     screen.refresh()
 
 

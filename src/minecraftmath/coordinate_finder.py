@@ -1,4 +1,5 @@
 from minecraftmath import calculator
+from system import window_management as wm
 
 xFirThr = 0
 zFirThr = 0
@@ -9,8 +10,7 @@ def findSecondSuggestedThrow(startPosX, startPosZ, startAngle):
     xFirThr = startPosX
     zFirThr = startPosZ
     angleFirThr = startAngle
-    hit = calculator.calculateHitRing(xFirThr, zFirThr, angleFirThr)
-    xSugThr, zSugThr = calculator.calculateSecondThrowCoordinates(hit)
+    xSugThr, zSugThr = calculator.calculateSecondThrowCoordinates(*calculator.calculateHitRing(xFirThr, zFirThr, angleFirThr))
     angleSugThr = calculator.calculateAngleAToB(xFirThr, zFirThr, xSugThr, zSugThr)
     return (xSugThr, zSugThr, angleSugThr)
 
