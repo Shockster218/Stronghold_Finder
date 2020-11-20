@@ -10,9 +10,13 @@ def findSecondSuggestedThrow(startPosX, startPosZ, startAngle):
     xFirThr = startPosX
     zFirThr = startPosZ
     angleFirThr = startAngle
-    xSugThr, zSugThr = calculator.calculateSecondThrowCoordinates(*calculator.calculateHitRing(xFirThr, zFirThr, angleFirThr))
-    angleSugThr = calculator.calculateAngleAToB(xFirThr, zFirThr, xSugThr, zSugThr)
-    return (xSugThr, zSugThr, angleSugThr)
+    inRing, distance = calculator.distanceFromOrigin(xFirThr, zFirThr)
+    if inRing:
+        return (0,0,calculator.convertToMinecraftAngle(angleFirThr), distance)
+    else:
+        xSugThr, zSugThr = calculator.calculateSecondThrowCoordinates(*calculator.calculateHitRing(xFirThr, zFirThr, angleFirThr))
+        angleSugThr = calculator.calculateAngleAToB(xFirThr, zFirThr, xSugThr, zSugThr)
+        return (xSugThr, zSugThr, angleSugThr)
 
 def findStronghold(startPosX, startPosZ, startAngle):
     global xFirThr, zFirThr, angleFirThr

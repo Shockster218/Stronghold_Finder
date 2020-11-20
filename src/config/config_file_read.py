@@ -52,12 +52,12 @@ def handleHotkey(configKey, defaultKey):
 def handleWindowDimensions(width, height):
     global WINDOW_WIDTH, WINDOW_HEIGHT
     intW = int(width)
-    if intW > 600 and intW <= 1920:
+    if intW > 650 and intW <= 1920:
         WINDOW_WIDTH = intW
     else:
         WINDOW_WIDTH = w.DEFAULT_WINDOW_WIDTH
     intH = int(height)
-    if intH > 200 and intH <= 1080:
+    if intH > 250 and intH <= 1080:
         WINDOW_HEIGHT = intH
     else:
         WINDOW_HEIGHT = w.DEFAULT_WINDOW_HEIGHT

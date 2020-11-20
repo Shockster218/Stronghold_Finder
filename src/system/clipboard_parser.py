@@ -31,9 +31,14 @@ def parseClipboard(clipboard):
     angle = float(f3[3]) % 360
     angle = ((angle-270) % 360, (angle + 90) % 360)[angle >= 0]
     if inNether(clipboard):
-        if netherSet == False:
+        if not netherSet:
             wm.addNether(*calculator.roundNetherCoordinates(x, y ,z))
             netherSet = True
+        else:
+            if secondThrowSet:
+                wm.drawScreen(True)
+                wm.addNether(*calculator.roundNetherCoordinates(x, y, z))
+                netherSet = True
     else:
         if firstThrowSet == True:
             wm.addStronghold(*coordinate_finder.findStronghold(x, z, angle))

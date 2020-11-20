@@ -28,7 +28,7 @@ def calculateHitRing(startPosX, startPosZ, startAngle):
                 yHit = y[i]
                 break
         hit = (xHit, yHit, startAngle)
-    return hit
+    return (hit)
 
 
 def calculateSecondThrowCoordinates(xHit, yHit, angle):
@@ -50,17 +50,31 @@ def calculateStrongholdCoordinates(xFirThr, zFirThr, angleFirThr, xSecThr, zSecT
     b1 = zSecThr - xSecThr * a1
     xStronghold = (b1 - b0)/(a0 - a1)
     zStronghold = xStronghold * a0 + b0
-    xStronghold = xStronghold - (xStronghold % 16) + (-12, 4)[int(xStronghold) % 16 > 0]
-    zStronghold = zStronghold - (zStronghold % 16) + (-12, 4)[int(zStronghold) % 16 > 0]
+    xStronghold = xStronghold - (xStronghold % 16) + ((-12, 4)[int(xStronghold) % 16 > 0])
+    zStronghold = zStronghold - (zStronghold % 16) + ((-12, 4)[int(zStronghold) % 16 > 0])
     return (xStronghold, zStronghold)
 
 
 def calculateAngleAToB(aX, aZ, bX, bZ):
     angle = np.arctan2(aX-bX, aZ-bZ)
     angle = -1 * (angle / np.pi) * 360 / 2 + 180
-    angle = (angle, -180 + (angle - 180))[angle > 180]
+    angle = convertToMinecraftAngle(angle)
     return angle
 
 
 def roundNetherCoordinates(x, y, z):
     return (int(round(x)), int(round(y)), int(round(z)))
+
+
+def distanceFromOrigin(x, z):
+    distance = np.sqrt(x*x + z*z)
+    if distance >= 1400:
+        return (True, distance)
+    else:
+        return (False, distance)
+
+
+def convertToMinecraftAngle(angle):
+    a = angle - 30
+    a = (a, -180 + (a - 180))[a > 180]
+    return a

@@ -1,6 +1,7 @@
 import win32gui
 import win32con
 import curses
+from minecraftmath import calculator
 from config import config_file_read as r
 from config import config_file_write as w
 from system import clipboard_parser as parser
@@ -12,7 +13,7 @@ suggestion = None
 stronghold = None
 close = False
 netherStatic = "This runs nether coords: "
-suggestionStatic = "Suggested 2nd throw coords: "
+suggestionStatic = "Suggested 2nd throw: "
 strongholdStatic = "Stronghold location: "
 
 
@@ -61,35 +62,39 @@ def drawScreen(redraw=False):
 
 
 def addNether(x, y, z):
+    global nether
+    nether = f'X:{x}, Y:{y}, Z:{z}'
     screen.addstr(2, 2, netherStatic)
-    screen.addstr(f'X:{x}, Y:{y}, Z:{z}', curses.color_pair(2))
+    screen.addstr(nether, curses.color_pair(2))
     screen.refresh()
 
 
-def addSuggestion(x, z, angle):
+def addSuggestion(x, z, angle, distance=0):
+    global suggestion
     screen.addstr(4, 2, suggestionStatic)
-    screen.addstr(f'X:{int(round(x))}, Z:{int(round(z))} with angle {round(angle, 1)}', curses.color_pair(2))
+    if x == 0:
+        suggestion = f'Turn right to angle: {round(angle, 1)}. Run 45s-1m. Throw 2nd eye.'
+        screen.addstr(suggestion, curses.color_pair(2))
+    else:
+        suggestion = f'X:{int(round(x))}, Z:{int(round(z))} with angle {round(angle, 1)}'
+        screen.addstr(suggestion, curses.color_pair(2))
     screen.refresh()
 
 
 def addStronghold(x, z, angle):
+    global stronghold
+    stronghold = f'X:{int(round(x))}, Z:{int(round(z))} with angle {round(angle, 1)}'
     screen.addstr(5, 2, strongholdStatic)
-    screen.addstr(f'X:{int(round(x))}, Z:{int(round(z))} with angle {round(angle, 1)}', curses.color_pair(2))
+    screen.addstr(stronghold, curses.color_pair(2))
     screen.refresh()
-
-
-def onExit():
-    global close
-    try:
-        win32gui.SetWindowPos(hWnd, win32con.HWND_NOTOPMOST, 0, 0, 0, 0)
-    except:
-        pass
-    w.SaveConfig(screen)
-    close = True
 
 
 def getch():
     return screen.getch()
+
+
+def positionMouse():
+    screen.move(8,61)
 
 
 def getmaxyx():
