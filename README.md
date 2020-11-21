@@ -23,13 +23,30 @@ Using the program is extremely simple, follow these steps in-game:
 
 #### For nether
 Simply copy the coordinates (refer to handy shortcuts below) and that's it!
+<p align="center">
+  <img width="720" src="img/nether.gif">
+</p>
 
 #### For stronghold.
-1. Make sure you are in an open area with a lot of room. Throw the eye of ender.
-2. Make sure the eye of ender is at the end of it's animation. It will fly toward a specific direction, then go straight up in the air a bit and float. This is what you are looking for.
-3. Make sure you are looking directly at the eye. Then, copy the coordinates (refer to handy shortcuts below).
-4. Go to the suggested 2nd throw coordinates. Repeat steps 1-3.
-5. You should have the stronghold coordinates! Be careful though, the coordinates may not be 100% accurate as slight variations from user input could offput the calculations by a few blocks. Make sure to listen for silverfish and dig around a bit! A third eye may be thrown to make sure of the stronghold location.
+1.Make sure you're in an open space with no obstacles within a 15 block radius of you. Once in position, throw your eye of ender. Locate where the eye flies to and simply
+copy the coordinates (refer to handy shortcuts below). ** For best results, it is very important to aim in the center of the eye when copying the coordinates. The best way
+I have found to do this is to have the F3 menu open and align the green line of the crosshair with the center of the eye.**
+<p align="center">
+  <img width="720" src="img/suggestion.gif">
+</p>
+*Note: You can follow the angle given by the stronghold finder to get to the coordinates the fastest way possible*
+2. Next, head to the suggested second throw coordinates displayed by the stronghold finder. In the off chance you're already a few thousand blocks out, you will not be given
+an exact throwing position but instead given a set of directions for your next throw. Simply follows those instead.
+3. Once there, simply throw the next eye of ender (also being in an open space) and copy the coordinates once more (refer to handy shortcuts below). ** Again, it is extremely import to be aimed directly in the center of the eye for best results. Use the trick mentioned before to do this.**
+<p align="center">
+  <img width="720" src="img/stronghold.gif">
+</p>
+*Note: You can follow the angle given by the stronghold finder to get to the coordinates the fastest way possible*
+4. And there you have it! Go to the coordinates displayed by the stronghold finder and dig down. If everything was done correctly, you should be directly in the center
+of the entrance staircase. Good luck!
+
+
+
 
 ### Handy shortcuts
 - F3 + C (in that order): Copy coordinates to clipboard for the program.

@@ -12,7 +12,7 @@ def findSecondSuggestedThrow(startPosX, startPosZ, startAngle):
     angleFirThr = startAngle
     inRing, distance = calculator.distanceFromOrigin(xFirThr, zFirThr)
     if inRing:
-        return (0,0,calculator.convertToMinecraftAngle(angleFirThr), distance)
+        return (0,0,calculator.convertToMinecraftAngle(angleFirThr, inRing=True), distance)
     else:
         xSugThr, zSugThr = calculator.calculateSecondThrowCoordinates(*calculator.calculateHitRing(xFirThr, zFirThr, angleFirThr))
         angleSugThr = calculator.calculateAngleAToB(xFirThr, zFirThr, xSugThr, zSugThr)

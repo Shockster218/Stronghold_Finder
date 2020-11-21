@@ -10,7 +10,7 @@ def onExit():
         win32gui.SetWindowPos(wm.hWnd, win32con.HWND_NOTOPMOST, 0, 0, 0, 0)
     except:
         pass
-    w.SaveConfig(screen)
+    w.SaveConfig(wm.screen)
     wm.close = True
 
 

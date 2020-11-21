@@ -12,7 +12,7 @@ nether = None
 suggestion = None
 stronghold = None
 close = False
-netherStatic = "This runs nether coords: "
+netherStatic = "Nether portal location: "
 suggestionStatic = "Suggested 2nd throw: "
 strongholdStatic = "Stronghold location: "
 

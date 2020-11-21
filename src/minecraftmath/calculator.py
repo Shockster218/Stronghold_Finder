@@ -74,7 +74,7 @@ def distanceFromOrigin(x, z):
         return (False, distance)
 
 
-def convertToMinecraftAngle(angle):
-    a = angle - 30
+def convertToMinecraftAngle(angle, inRing=False):
+    a = (angle, angle - 30)[inRing]
     a = (a, -180 + (a - 180))[a > 180]
     return a
