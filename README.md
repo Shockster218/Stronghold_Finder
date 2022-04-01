@@ -1,5 +1,3 @@
-<h1 align="center">NOTICE! Stronghold finders are now illegal for minecraft speedruns! Use with caution.</h1>
-
 <h1 align="center">Stronghold Finder</h1>
 <p align="center">My personal Minecraft Stronghold finding tool using a triangulation algorithm released for community use.</p>
 <h3 align="center">
